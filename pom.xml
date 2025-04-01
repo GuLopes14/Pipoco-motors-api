@@ -9,10 +9,10 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>br.com.fiap</groupId>
-	<artifactId>money-control-api</artifactId>
+	<artifactId>pipoco-motors-api</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>money-control-api</name>
-	<description>API do SaaS de controle de finanças pessoais</description>
+	<name>pipoco-motors-api</name>
+	<description>API do site da Pipoco Motors</description>
 	<url/>
 	<licenses>
 		<license/>
