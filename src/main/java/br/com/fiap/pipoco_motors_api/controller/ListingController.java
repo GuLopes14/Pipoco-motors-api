@@ -20,9 +20,10 @@ import org.springframework.web.server.ResponseStatusException;
 
 import br.com.fiap.pipoco_motors_api.model.Listing;
 import br.com.fiap.pipoco_motors_api.repository.ListingsRepository;
+import jakarta.validation.Valid;
 
 @RestController
-@RequestMapping("/listings")  
+@RequestMapping("/listings")
 
 public class ListingController {
 
@@ -37,29 +38,29 @@ public class ListingController {
     }
 
     @PostMapping
-    public ResponseEntity<Listing> create(@RequestBody Listing listing) {
-        log.info("Cadastrando o anúncio " + listing.getName());
+    public ResponseEntity<Listing> create(@Valid @RequestBody Listing listing) {
+        log.info("Cadastrando o anúncio " + listing.getModel());
         repository.save(listing);
         return ResponseEntity.status(HttpStatus.CREATED).body(listing);
     }
 
-    @GetMapping("/{id}")  
+    @GetMapping("/{id}")
     public Listing get(@PathVariable Long id) {
         log.info("Buscando anúncio " + id);
         return getListing(id);
     }
 
-    @DeleteMapping("/{id}")  
+    @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void destroy(@PathVariable Long id) {
         log.info("Deletando anúncio: " + id);
         repository.delete(getListing(id));
     }
 
-    @PutMapping("/{id}")  
-    public Listing update(@PathVariable Long id, @RequestBody Listing listing) {
+    @PutMapping("/{id}")
+    public Listing update(@PathVariable Long id, @RequestBody @Valid Listing listing) {
         log.info("Atualizando anúncio: " + id);
-        
+
         listing.setId(id);
         return repository.save(listing);
     }

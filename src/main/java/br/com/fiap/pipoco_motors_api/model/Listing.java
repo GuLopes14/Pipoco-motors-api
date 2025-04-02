@@ -5,13 +5,13 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import jakarta.persistence.Id;
 import lombok.Data;
 
 @Entity
 @Data
-
 public class Listing {
 
     @Id
@@ -24,7 +24,7 @@ public class Listing {
 
     @NotBlank(message = "O nome é obrigatório")
     @Size(min = 3, max = 100, message = "O nome deve ter entre 3 e 100 caracteres")
-    private String name;
+    private String model;
 
     @NotBlank(message = "A placa é obrigatória")
     @Size(min = 7, max = 7, message = "A placa deve ter exatamente 7 caracteres")
@@ -38,10 +38,18 @@ public class Listing {
     @Size(min = 3, max = 30, message = "A cor deve ter entre 3 e 30 caracteres")
     private String color;
 
-    @NotBlank(message = "O preço é obrigatório")
+    @NotNull(message = "O preço é obrigatório")
     @Min(value = 0, message = "O preço deve ser maior ou igual a zero")
     private Double price;
 
-    @Size( max = 500, message = "A descrição deve ter entre 10 e 500 caracteres")
+    @NotNull(message = "O preço de FIPE é obrigatório")
+    @Min(value = 0, message = "O preço deve ser maior ou igual a zero")
+    private Double fipePrice;
+
+    @Size(max = 500, message = "A descrição deve ter no máximo 500 caracteres")
     private String description;
+
+    @NotNull(message = "A quilometragem é obrigatória")
+    @Min(value = 0, message = "A quilometragem deve ser maior ou igual a zero")
+    private Double quilometers;
 }
