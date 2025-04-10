@@ -5,6 +5,8 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -20,6 +22,8 @@ import org.springframework.web.server.ResponseStatusException;
 
 import br.com.fiap.pipoco_motors_api.model.Listing;
 import br.com.fiap.pipoco_motors_api.repository.ListingsRepository;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import jakarta.validation.Valid;
 
 @RestController
@@ -30,18 +34,24 @@ public class ListingController {
     private final Logger log = LoggerFactory.getLogger(getClass());
 
     @Autowired
+
     private ListingsRepository repository;
 
     @GetMapping
+    @Cacheable("listings")
+    @Operation(tags = "Listing", summary = "Listar anúncios", description = "Lista todos os anúncios cadastrados")
     public List<Listing> index() {
         return repository.findAll();
     }
 
     @PostMapping
+    @ResponseStatus(code = HttpStatus.CREATED)
+    @Operation(responses = @ApiResponse(responseCode = "400", description = "Erro de validação"))
+    @CacheEvict(value = "listings", allEntries = true)
     public ResponseEntity<Listing> create(@Valid @RequestBody Listing listing) {
         log.info("Cadastrando o anúncio " + listing.getModel());
         repository.save(listing);
-        return ResponseEntity.status(HttpStatus.CREATED).body(listing);
+        return ResponseEntity.status(201).body(listing);
     }
 
     @GetMapping("/{id}")
@@ -51,6 +61,7 @@ public class ListingController {
     }
 
     @DeleteMapping("/{id}")
+    @CacheEvict(value = "listings", allEntries = true)
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void destroy(@PathVariable Long id) {
         log.info("Deletando anúncio: " + id);
@@ -58,6 +69,7 @@ public class ListingController {
     }
 
     @PutMapping("/{id}")
+    @CacheEvict(value = "listings", allEntries = true)
     public Listing update(@PathVariable Long id, @RequestBody @Valid Listing listing) {
         log.info("Atualizando anúncio: " + id);
 
