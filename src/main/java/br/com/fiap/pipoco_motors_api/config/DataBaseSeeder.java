@@ -4,21 +4,34 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import br.com.fiap.pipoco_motors_api.model.BuyCar;
 import br.com.fiap.pipoco_motors_api.model.Listing;
+import br.com.fiap.pipoco_motors_api.model.User;
+import br.com.fiap.pipoco_motors_api.model.UserRole;
 import br.com.fiap.pipoco_motors_api.repository.BuyCarRepository;
 import br.com.fiap.pipoco_motors_api.repository.ListingsRepository;
+import br.com.fiap.pipoco_motors_api.repository.UserRepository;
 import jakarta.annotation.PostConstruct;
 
 @Component
 public class DataBaseSeeder {
+
+    private final PasswordEncoder passwordEncoder;
+
+    private final UserRepository userRepository;
     @Autowired
     private ListingsRepository listingsRepository;
 
     @Autowired
     private BuyCarRepository buyCarRepository;
+
+    DataBaseSeeder(UserRepository userRepository, PasswordEncoder passwordEncoder) {
+        this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
+    }
 
     @PostConstruct
     public void init() {
@@ -137,6 +150,19 @@ public class DataBaseSeeder {
             );
         }
 
-        buyCarRepository.saveAll(buyCar);        
+        buyCarRepository.saveAll(buyCar);
+        
+        userRepository.saveAll(List.of(
+            User.builder()
+                .email("gustavo@gmail.com")
+                .password(passwordEncoder.encode("12345"))
+                .role(UserRole.ADMIN)
+                .build(),
+            User.builder()
+                .email("renato@gmail.com")
+                .password(passwordEncoder.encode("12345"))
+                .role(UserRole.USER)
+                .build()
+        ));
     }
 }
